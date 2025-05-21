@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum FiatCurrency {
+  THB
+  USD
+}
+
+enum FiatTransactionType {
+  deposit
+  withdraw
+}
+
+enum CryptoCurrency {
+  BTC
+  ETH
+  XRP
+  DOGE
+}
+
+enum CryptoTransactionType {
+  internal
+  external
+}
+
+enum OrderType {
+  buy
+  sell
+}
+
+enum OrderStatus {
+  open
+  matched
+  cancelled
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  firstName  String   @map("first_name")
+  lastName   String   @map("last_name")
+  userName   String?  @unique @map("user_name")
+  email      String?  @unique
+  password   String
+  role       Role     @default(USER)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  fiatTransactions   FiatTransaction[]
+  wallets            Wallet[]
+  cryptoTransactions CryptoTransaction[]
+  orders             Order[]
+  trades_as_buyer    Trade[]             @relation("BuyerRelation")
+  trades_as_seller   Trade[]             @relation("SellerRelation")
+
+  @@map("user")
+}
+
+model Wallet {
+  id            Int            @id @default(autoincrement())
+  user_id       Int
+  currency_type CryptoCurrency
+  balance       Decimal
+
+  user          User                @relation(fields: [user_id], references: [id])
+  sent_txns     CryptoTransaction[] @relation("SenderWallet")
+  received_txns CryptoTransaction[] @relation("ReceiverWallet")
+
+  @@map("wallet")
+}
+
+model FiatTransaction {
+  id        Int                 @id @default(autoincrement())
+  user_id   Int
+  amount    Decimal
+  currency  FiatCurrency
+  type      FiatTransactionType
+  timestamp DateTime            @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("fiat_transaction")
+}
+
+model CryptoTransaction {
+  id                 Int                   @id @default(autoincrement())
+  user_id            Int
+  sender_wallet_id   Int
+  receiver_wallet_id Int
+  amount             Decimal
+  crypto_type        CryptoCurrency
+  type               CryptoTransactionType
+  target_address     String?
+  timestamp          DateTime              @default(now())
+
+  user            User   @relation(fields: [user_id], references: [id])
+  sender_wallet   Wallet @relation("SenderWallet", fields: [sender_wallet_id], references: [id])
+  receiver_wallet Wallet @relation("ReceiverWallet", fields: [receiver_wallet_id], references: [id])
+
+  @@map("crypto_transaction")
+}
+
+model Order {
+  id             Int            @id @default(autoincrement())
+  user_id        Int
+  type           OrderType
+  crypto_type    CryptoCurrency
+  amount         Decimal
+  price_per_unit Decimal
+  status         OrderStatus
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+
+  user        User    @relation(fields: [user_id], references: [id])
+  buy_trades  Trade[] @relation("BuyOrderRelation")
+  sell_trades Trade[] @relation("SellOrderRelation")
+
+  @@map("order")
+}
+
+model Trade {
+  id             Int      @id @default(autoincrement())
+  buyer_id       Int
+  seller_id      Int
+  buy_order_id   Int
+  sell_order_id  Int
+  amount         Decimal
+  price_per_unit Decimal
+  executed_at    DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  buyer      User  @relation("BuyerRelation", fields: [buyer_id], references: [id])
+  seller     User  @relation("SellerRelation", fields: [seller_id], references: [id])
+  buy_order  Order @relation("BuyOrderRelation", fields: [buy_order_id], references: [id])
+  sell_order Order @relation("SellOrderRelation", fields: [sell_order_id], references: [id])
+
+  @@map("trade")
+}
