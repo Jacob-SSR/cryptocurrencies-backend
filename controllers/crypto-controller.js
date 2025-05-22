@@ -1,7 +1,6 @@
 const prisma = require("../config/prisma");
 const createError = require("../utils/create-error");
 
-// กำหนด array ของสกุลเงินคริปโตที่รองรับ
 const CryptoCurrencies = ["BTC", "ETH", "XRP", "DOGE"];
 
 exports.transferInternal = async (req, res, next) => {

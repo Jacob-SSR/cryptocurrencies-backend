@@ -1,4 +1,3 @@
-const { Decimal } = require("@prisma/client/runtime/client");
 const prisma = require("../config/prisma");
 
 exports.getMyWallets = async (req, res, next) => {
@@ -31,7 +30,7 @@ exports.getWalletByCurrency = async (req, res, next) => {
 
     res.json({ wallet });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     next(err);
   }
 };
@@ -55,7 +54,7 @@ exports.createWallet = async (req, res, next) => {
       data: {
         user_id: req.user.id,
         currency_type,
-        balance: req.body.balance 
+        balance: req.body.balance,
       },
     });
 

@@ -1,6 +1,5 @@
 const prisma = require("../config/prisma");
 
-// GET /api/orders
 exports.getMyOrders = async (req, res, next) => {
   try {
     const orders = await prisma.order.findMany({
@@ -13,12 +12,11 @@ exports.getMyOrders = async (req, res, next) => {
     });
 
     res.json({ orders });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// POST /api/orders
 exports.createOrder = async (req, res, next) => {
   try {
     const { type, crypto_type, amount, price_per_unit } = req.body;
@@ -39,12 +37,11 @@ exports.createOrder = async (req, res, next) => {
     });
 
     res.status(201).json({ order: newOrder });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// GET /api/orders/:id
 exports.getOrderById = async (req, res, next) => {
   try {
     const orderId = parseInt(req.params.id);
@@ -61,12 +58,11 @@ exports.getOrderById = async (req, res, next) => {
     }
 
     res.json({ order });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// DELETE /api/orders/:id
 exports.cancelOrder = async (req, res, next) => {
   try {
     const orderId = parseInt(req.params.id);
@@ -91,7 +87,7 @@ exports.cancelOrder = async (req, res, next) => {
     });
 
     res.json({ order: cancelledOrder });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };

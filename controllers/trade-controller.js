@@ -16,12 +16,11 @@ exports.getMyTrades = async (req, res, next) => {
     });
 
     res.json({ trades });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// GET /api/trades/:id
 exports.getTradeById = async (req, res, next) => {
   try {
     const tradeId = parseInt(req.params.id);
@@ -46,12 +45,11 @@ exports.getTradeById = async (req, res, next) => {
     }
 
     res.json({ trade });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// POST /api/trades (Optional - Admin/System Only)
 exports.createTrade = async (req, res, next) => {
   try {
     const {
@@ -89,7 +87,7 @@ exports.createTrade = async (req, res, next) => {
     });
 
     res.status(201).json({ trade });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };

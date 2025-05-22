@@ -13,9 +13,9 @@ const orderRouter = require("./routes/orders-router");
 const tradeRouter = require("./routes/trade-router");
 const app = express();
 
+app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
-app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);

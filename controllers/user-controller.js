@@ -1,6 +1,5 @@
 const prisma = require("../config/prisma");
 
-// [GET] /api/users/me - get current authenticated user
 exports.getMe = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({
@@ -21,23 +20,21 @@ exports.getMe = async (req, res, next) => {
     }
 
     res.json(user);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// [GET] /api/users/:id - get user by ID (admin only or self)
 exports.getUserById = async (req, res) => {
   try {
-    // สมมติรับ id จาก params
-    const id = parseInt(req.params.id); // หรือดึงจาก query หรือ body
+    const id = parseInt(req.params.id);
 
     if (!id) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: id }, // ต้องส่งค่าจริง ๆ เช่น 123
+      where: { id: id },
       select: {
         id: true,
         firstName: true,
@@ -60,7 +57,6 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// [PATCH] /api/users/me - update current user
 exports.updateMe = async (req, res, next) => {
   try {
     const { firstName, lastName, userName, email } = req.body;
@@ -84,7 +80,7 @@ exports.updateMe = async (req, res, next) => {
     });
 
     res.json(updated);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
