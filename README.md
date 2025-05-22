@@ -106,3 +106,15 @@ npm run resetDB
 ✅ = Requires Authentication  
 ✅ (Admin) = Requires Admin Authentication  
 ❌ = Public
+
+---
+
+```text
+path ที่มี error
+/admin/fiat-transactions
+/admin/crypto-transactions
+/admin/orders
+/admin/trades
+```
+
+---
